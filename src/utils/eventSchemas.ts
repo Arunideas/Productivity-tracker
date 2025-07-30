@@ -1,59 +1,107 @@
 import { z } from "zod";
 
-// utils/eventSchemas.ts
+// User schema used in all events
+const userSchema = z.object({
+  id: z.string(),
+  ip: z.string()
+});
+
+// ⌨️ Typing Event Schema
 export const typingEventSchema = z.object({
-  type: z.literal("typing"),
-  languageId: z.string(),
-  characters: z.number(),
-  words: z.number(),
-  lines: z.number(),
-  timestamp: z.string(),
-  userId: z.string(),
-  ipAddress: z.string(),
+  eventType: z.literal("typing"),
+  timestamp: z.string().datetime(),
+  user: userSchema,
   filePath: z.string(),
-  lineNumbers: z.array(z.number()),
-  wordCount: z.number(),
-  lineCount: z.number(),
+  metrics: z.object({
+    languageId: z.string(),
+    characters: z.number(),
+    words: z.number(),
+    lines: z.number(),
+    lineNumbers: z.array(z.number()),
+    start: z.string().datetime(),
+    end: z.string().datetime(),
+    durationSeconds: z.number()
+  })
 });
 
-export const fileEventSchema = z.object({
-  type: z.literal("file"),
-  operation: z.enum(["create", "delete", "rename", "open", "close", "save"]),
-  filePath: z.string(),
-  timestamp: z.string().datetime(),
-});
-
-export const terminalEventSchema = z.object({
-  type: z.literal("terminal"),
-  command: z.string(),
-  timestamp: z.string().datetime(),
-});
-
-export const mouseEventSchema = z.object({
-  type: z.literal("mouse"),
-  action: z.string(),
-  fileName: z.string(),
-  line: z.number(),
-  character: z.number(),
-  timestamp: z.string().datetime(),
-});
-
-export const extensionEventSchema = z.object({
-  type: z.literal("extension"),
-  operation: z.enum(["install", "uninstall"]), // 🔁 updated from 'action' to 'operation'
-  extensionId: z.string(),                     // 🔁 updated from 'name' to 'extensionId'
-  timestamp: z.string().datetime(),
-});
-
+// 📋 Copy-Paste Event Schema
 export const copyPasteEventSchema = z.object({
-  type: z.literal("copyPaste"),
-  action: z.enum(["copy", "paste"]),
-  characterCount: z.number(),
+  eventType: z.literal("copyPaste"),
   timestamp: z.string().datetime(),
+  user: userSchema,
+  filePath: z.string().optional(),
+  metrics: z.object({
+    action: z.enum(["copy", "paste"]),
+    characterCount: z.number()
+  })
 });
 
-export const idleEventSchema = z.object({
-  type: z.literal("idle"),
-  durationSeconds: z.number(),
+// 📁 File Event Schema
+export const fileEventSchema = z.object({
+  eventType: z.literal("file"),
   timestamp: z.string().datetime(),
+  user: userSchema,
+  filePath: z.string(),
+  metrics: z.object({
+    operation: z.enum(["open", "close", "save"])
+  })
+});
+
+// 💻 Terminal Event Schema
+export const terminalEventSchema = z.object({
+  eventType: z.literal("terminal"),
+  timestamp: z.string().datetime(),
+  user: userSchema,
+  metrics: z.object({
+    command: z.string()
+  })
+});
+
+// 🖱️ Mouse Event Schema
+export const mouseEventSchema = z.object({
+  eventType: z.literal("mouse"),
+  timestamp: z.string().datetime(),
+  user: userSchema,
+  filePath: z.string(),
+  metrics: z.object({
+    x: z.number(),
+    y: z.number(),
+    context: z.string(),
+    start: z.string().datetime(),
+    end: z.string().datetime(),
+    durationSeconds: z.number()
+  })
+});
+
+// 💤 Idle Event Schema
+export const idleEventSchema = z.object({
+  eventType: z.literal("idle"),
+  timestamp: z.string().datetime(),
+  user: userSchema,
+  metrics: z.object({
+    start: z.string().datetime(),
+    end: z.string().datetime(),
+    durationSeconds: z.number()
+  })
+});
+
+// 🧩 Extension Install Event Schema
+export const extensionEventSchema = z.object({
+  eventType: z.literal("extensionInstall"),
+  timestamp: z.string().datetime(),
+  user: userSchema,
+  metrics: z.object({
+    extensionId: z.string(),
+    version: z.string()
+  })
+});
+
+// 🧩 Extension Uninstall Event Schema
+export const extensionUninstallEventSchema = z.object({
+  eventType: z.literal("extensionUninstall"),
+  timestamp: z.string().datetime(),
+  user: userSchema,
+  metrics: z.object({
+    extensionId: z.string()
+  })
 });

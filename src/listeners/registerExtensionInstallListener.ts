@@ -3,49 +3,47 @@ import { saveEvent } from "../utils/saveEvent";
 
 let previousExtensionIds = new Set<string>();
 
-export function registerExtensionInstallListener() {
-  // Initial capture of installed extension IDs
-  previousExtensionIds = new Set(
-    vscode.extensions.all.map((ext) => ext.id)
-  );
-
+export function registerExtensionInstallListener(
+  context: vscode.ExtensionContext,
+  user: { id: string; ip: string }
+) {
+  previousExtensionIds = new Set(vscode.extensions.all.map(ext => ext.id));
   console.log("🧩 Extension tracker initialized with", previousExtensionIds.size, "extensions.");
 
-  // Poll every 10 seconds
-  setInterval(async () => {
-    console.log("🧪 Checking for extension install/uninstall...");
-
+  const interval = setInterval(async () => {
     const currentExtensions = vscode.extensions.all;
-    const currentExtensionIds = new Set(currentExtensions.map((ext) => ext.id));
+    const currentExtensionIds = new Set(currentExtensions.map(ext => ext.id));
 
-    // Find newly installed extensions
-    const newExtensions = [...currentExtensionIds].filter((id) => !previousExtensionIds.has(id));
+    // 🟢 Detect newly installed extensions
+    const newExtensions = [...currentExtensionIds].filter(id => !previousExtensionIds.has(id));
     for (const id of newExtensions) {
-      console.log("🧩 Extension Installed:", id);
+      const ext = currentExtensions.find(e => e.id === id);
       await saveEvent({
-        type: "extension",
-        operation: "install",
-        extensionId: id,
+        eventType: "extensionInstall",
         timestamp: new Date().toISOString(),
+        user,
+        metrics: {
+          extensionId: id,
+          version: ext?.packageJSON?.version || "unknown"
+        }
       });
-      vscode.window.showInformationMessage(`🧩 Extension Installed: ${id}`);
     }
 
-    // Find uninstalled extensions
-    const removedExtensions = [...previousExtensionIds].filter((id) => !currentExtensionIds.has(id));
+    // 🔴 Detect uninstalled extensions
+    const removedExtensions = [...previousExtensionIds].filter(id => !currentExtensionIds.has(id));
     for (const id of removedExtensions) {
-      console.log("❌ Extension Uninstalled:", id);
       await saveEvent({
-        type: "extension",
-        operation: "uninstall",
-        extensionId: id,
+        eventType: "extensionUninstall",
         timestamp: new Date().toISOString(),
+        user,
+        metrics: {
+          extensionId: id
+        }
       });
-      vscode.window.showInformationMessage(`❌ Extension Uninstalled: ${id}`);
     }
 
-    // Update the reference set
     previousExtensionIds = currentExtensionIds;
+  }, 10000);
 
-  }, 10000); // every 10s
+  context.subscriptions.push({ dispose: () => clearInterval(interval) });
 }

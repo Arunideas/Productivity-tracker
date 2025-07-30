@@ -1,59 +1,76 @@
-import * as dotenv from 'dotenv';
+import * as dotenv from "dotenv";
 dotenv.config();
 
 import * as vscode from "vscode";
 import { saveEvent } from "./utils/saveEvent";
+import { getUserInfo } from "./utils/getUserInfo";
 
-// Existing listeners
+// Listeners
 import { registerTypingListener } from "./listeners/registerTypingListener";
 import { registerClipboardListener } from "./listeners/registerClipboardListener";
 import { registerFileListener } from "./listeners/registerFileListener";
 import { registerTerminalListener } from "./listeners/registerTerminalListener";
 import { registerMouseListener } from "./listeners/registerMouseListener";
-
-// ✅ New listeners
 import { registerIdleListener } from "./listeners/registerIdleListener";
 import { registerExtensionInstallListener } from "./listeners/registerExtensionInstallListener";
-console.log("🚀 VSCode Activity Tracker extension activated");
 
+// ✅ Performance Monitor
+import { startMemoryMonitor } from "./utils/performanceMonitor";
 
-export function activate(context: vscode.ExtensionContext) {
+console.log("🚀 VSCode Activity Tracker extension loaded");
+
+export async function activate(context: vscode.ExtensionContext) {
   console.log("✅ vscode-activity-tracker activated!");
 
-  // Register all activity listeners
-  registerTypingListener(context);
-  registerClipboardListener(context);
-  registerFileListener(context);
-  registerTerminalListener(context);
-  registerMouseListener(context);
+  const user = await getUserInfo();
 
-  // ✅ Register new listeners
-  registerIdleListener(context);
-  registerExtensionInstallListener();
+  // ✅ Start memory monitoring
+  const stopMonitoring = startMemoryMonitor();
+  context.subscriptions.push({ dispose: stopMonitoring });
 
-  // Track file open
+  // 🧪 Performance Testing Logs
+  console.log("Starting Performance Testing Logs...");
+  console.log(" [LOAD TEST] Ready to test: Copy/Paste large files");
+  console.log(" [PERFORMANCE TEST] Ready to measure CPU on code generation");
+  console.log(" [PERFORMANCE TEST] Ready to test typing performance");
+
+  registerTypingListener(context, user);
+  registerClipboardListener(context, user);
+  registerFileListener(context, user);
+  registerTerminalListener(context, user);
+  registerMouseListener(context, user);
+  registerIdleListener(context, user);
+  registerExtensionInstallListener(context, user);
+
   context.subscriptions.push(
     vscode.workspace.onDidOpenTextDocument((document) => {
-      console.log("📂 Opened file:", document.fileName);
-      saveEvent({
-        type: "file",
-        operation: "open",
-        filePath: document.fileName,
+      const event = {
+        eventType: "file",
         timestamp: new Date().toISOString(),
-      });
+        user,
+        filePath: document.fileName,
+        metrics: {
+          operation: "open",
+        },
+      };
+      console.log("📂 Opened file:", document.fileName);
+      saveEvent(event);
     })
   );
 
-  // Track file close
   context.subscriptions.push(
     vscode.workspace.onDidCloseTextDocument((document) => {
-      console.log("❌ Closed file:", document.fileName);
-      saveEvent({
-        type: "file",
-        operation: "close",
-        filePath: document.fileName,
+      const event = {
+        eventType: "file",
         timestamp: new Date().toISOString(),
-      });
+        user,
+        filePath: document.fileName,
+        metrics: {
+          operation: "close",
+        },
+      };
+      console.log("❌ Closed file:", document.fileName);
+      saveEvent(event);
     })
   );
 

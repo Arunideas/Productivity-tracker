@@ -1,26 +1,36 @@
 import * as vscode from "vscode";
 import { saveEvent } from "../utils/saveEvent";
 
-export function registerTerminalListener(context: vscode.ExtensionContext) {
+export function registerTerminalListener(context: vscode.ExtensionContext, user: { id: string; ip: string }) {
+  // When a terminal is created
   context.subscriptions.push(
-    vscode.window.onDidOpenTerminal(async (terminal) => {
+    vscode.window.onDidOpenTerminal((terminal) => {
       const event = {
-        type: "terminal",
-        command: `Opened terminal: ${terminal.name}`,
+        eventType: "terminal",
         timestamp: new Date().toISOString(),
+        user,
+        metrics: {
+          command: `Terminal opened: ${terminal.name}`
+        }
       };
-      console.log("[Terminal Opened]", event);
-      await saveEvent(event);
-    }),
-
-    vscode.window.onDidCloseTerminal(async (terminal) => {
-      const event = {
-        type: "terminal",
-        command: `Closed terminal: ${terminal.name}`,
-        timestamp: new Date().toISOString(),
-      };
-      console.log("[Terminal Closed]", event);
-      await saveEvent(event);
+      saveEvent(event);
     })
   );
+
+  // ✅ When a terminal is closed
+  context.subscriptions.push(
+    vscode.window.onDidCloseTerminal((terminal) => {
+      const event = {
+        eventType: "terminal",
+        timestamp: new Date().toISOString(),
+        user,
+        metrics: {
+          command: `Terminal closed: ${terminal.name}`
+        }
+      };
+      saveEvent(event);
+    })
+  );
+
+  // If needed: listen to terminal commands if custom terminals are used
 }
