@@ -1,74 +1,87 @@
+# 🚀 VSCode Productivity Tracker
 
-# Productivity-tracker
-# vscode-activity-tracker README
-
-This is the README for your extension "vscode-activity-tracker". After writing up a brief description, we recommend including the following sections.
-
-## Features
-
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+A **Visual Studio Code Extension** that tracks user activity to analyze productivity patterns.  
+It logs multiple types of events (typing, file open/close, terminal usage, clipboard, mouse movements, idle time, and extension installs/uninstalls) and stores them in **MongoDB** for further analysis.  
 
 ---
 
-## Following extension guidelines
+## 📂 Project Structure
+Productivity-tracker/
+│
+├── src/
+│ ├── extension.ts # Main entry point, activates the extension
+│ │
+│ ├── listeners/ # Event listeners
+│ │ ├── registerTypingListener.ts # Tracks typing events
+│ │ ├── registerClipboardListener.ts# Tracks copy/paste events
+│ │ ├── registerFileListener.ts # Tracks file open/close/save events
+│ │ ├── registerTerminalListener.ts # Tracks terminal commands
+│ │ ├── registerMouseListener.ts # Tracks mouse events
+│ │ ├── registerIdleListener.ts # Tracks idle time
+│ │ └── registerExtensionInstallListener.ts # Tracks extension install/uninstall events
+│ │
+│ ├── utils/
+│ │ ├── saveEvent.ts # Validates and saves events to MongoDB
+│ │ ├── mongoClient.ts # MongoDB connection logic
+│ │ ├── eventSchemas.ts # Zod schemas for event validation
+│ │ ├── getUserInfo.ts # Fetches user info (ID & IP)
+│ │ └── performanceMonitor.ts # Monitors memory & CPU usage
+│
+├── package.json # Extension manifest
+├── tsconfig.json # TypeScript configuration
+├── README.md # Project documentation
+└── .vscodeignore # Files to ignore while packaging
+## ✨ Features
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+✅ **Typing Tracking** – Captures characters, words, lines, and active file paths  
+✅ **File Tracking** – Logs open, close, and save events  
+✅ **Clipboard Tracking** – Detects copy/paste actions  
+✅ **Terminal Tracking** – Records executed terminal commands  
+✅ **Mouse Tracking** – Captures mouse movement coordinates and context  
+✅ **Idle Time Tracking** – Detects inactivity duration  
+✅ **Extension Install/Uninstall Tracking** – Monitors VSCode extension changes  
+✅ **MongoDB Integration** – All events stored securely for analysis  
+✅ **Performance Monitoring** – Tracks CPU and Memory usage to ensure stability  
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+---
 
-## Working with Markdown
+## 🛠️ Tech Stack
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+- **Language**: TypeScript  
+- **Framework**: VSCode Extension API  
+- **Database**: MongoDB (Cloud/Atlas)  
+- **Validation**: Zod Schemas  
+- **Tools**: VSCE, Git, Node.js  
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+---
 
-## For more information
+## 🚀 Installation
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+1️⃣ Clone the repository:
+```bash
+git clone <your-fork-url>
+cd Productivity-tracker
 
-**Enjoy!**
->>>>>>> 10c9fd4
+Install dependencies:
+npm install
+
+Build the extension:
+npm run compile
+
+Package into .vsix:
+vsce package
+
+ Install in VSCode:
+
+Open VSCode
+
+Go to Extensions > Install from VSIX
+
+Select the generated .vsix file
+
+Run in Extension Host:
+
+npm run compile
+code .
+# Press F5 to launch in Extension Development Host
+
