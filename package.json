@@ -1,6 +1,6 @@
 {
   "name": "vscode-activity-tracker",
-  "displayName": "VSCode Activity Tracker",
+  "displayName": "Productivity Tracker",
   "publisher": "vetkaiLabs",
   "description": "A Visual Studio Code extension that tracks and logs coding activity, file changes, and time spent on projects.",
   "version": "0.0.1",
