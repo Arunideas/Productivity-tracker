@@ -1,0 +1,83 @@
+{
+  "name": "vscode-activity-tracker",
+  "displayName": "Productivity Tracker",
+  "publisher": "vetkaiLabs",
+  "description": "A Visual Studio Code extension that tracks and logs coding activity, file changes, and time spent on projects.",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/vscode-activity-tracker.git"
+  },
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:vscode-activity-tracker.helloWorld",
+    "workspaceContains:**/*.ts"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vscode-activity-tracker.helloWorld",
+        "title": "Hello World"
+      },
+      {
+        "command": "vscode-activity-tracker.copy",
+        "title": "Activity Tracker: Copy"
+      },
+      {
+        "command": "vscode-activity-tracker.paste",
+        "title": "Activity Tracker: Paste"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "vscode-activity-tracker.copy",
+        "key": "ctrl+c",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "vscode-activity-tracker.paste",
+        "key": "ctrl+v",
+        "when": "editorTextFocus"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test",
+    "dev": "node ./out/extension.js"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@types/react": "^19.1.9",
+    "@types/react-dom": "^19.1.7",
+    "@types/vscode": "^1.70.0",
+    "@typescript-eslint/eslint-plugin": "^8.31.1",
+    "@typescript-eslint/parser": "^8.31.1",
+    "@vscode/test-cli": "^0.0.11",
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.25.1",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "mongodb": "^6.18.0",
+    "next": "^15.4.4",
+    "public-ip": "^7.0.1",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "zod": "^4.0.10"
+  }
+}
