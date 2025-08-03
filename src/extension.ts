@@ -13,6 +13,8 @@ import { registerTerminalListener } from "./listeners/registerTerminalListener";
 import { registerMouseListener } from "./listeners/registerMouseListener";
 import { registerIdleListener } from "./listeners/registerIdleListener";
 import { registerExtensionInstallListener } from "./listeners/registerExtensionInstallListener";
+import { registerFocusListener } from "./listeners/registerFocusListener";
+
 
 // ✅ Performance Monitor
 import { startMemoryMonitor } from "./utils/performanceMonitor";
@@ -41,6 +43,8 @@ export async function activate(context: vscode.ExtensionContext) {
   registerMouseListener(context, user);
   registerIdleListener(context, user);
   registerExtensionInstallListener(context, user);
+  registerFocusListener(context, user);
+
 
   context.subscriptions.push(
     vscode.workspace.onDidOpenTextDocument((document) => {

@@ -7,7 +7,8 @@ import {
   extensionEventSchema,
   extensionUninstallEventSchema,
   copyPasteEventSchema,
-  idleEventSchema
+  idleEventSchema,
+  focusEventSchema // ✅ new import
 } from "./eventSchemas";
 
 const schemas = [
@@ -18,7 +19,8 @@ const schemas = [
   extensionEventSchema,
   extensionUninstallEventSchema,
   copyPasteEventSchema,
-  idleEventSchema
+  idleEventSchema,
+  focusEventSchema // ✅ added to validation list
 ];
 
 console.log("🟡 saveEvent.ts loaded");

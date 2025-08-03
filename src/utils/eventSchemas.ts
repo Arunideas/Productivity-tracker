@@ -105,3 +105,15 @@ export const extensionUninstallEventSchema = z.object({
     extensionId: z.string()
   })
 });
+// 👀 Focus Events
+// 🪟 Window Focus Event Schema
+export const focusEventSchema = z.object({
+  eventType: z.literal("focus"),
+  timestamp: z.string().datetime(),
+  user: userSchema,
+  metrics: z.object({
+    state: z.enum(["focus", "blur"]),
+    durationSeconds: z.number()
+  })
+});
+
